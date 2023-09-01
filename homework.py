@@ -42,12 +42,13 @@ class Training:
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        distance = self.get_distance()
+        distance: float = self.get_distance()
         return distance / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError('Need to redefine method')
+        raise NotImplementedError('Need to redefine method'
+                                  '"get_spent_calories"')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -64,7 +65,7 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         """Рассчитать потраченные калории."""
-        mean_speed = self.get_mean_speed()
+        mean_speed: float = self.get_mean_speed()
         return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
                 * mean_speed + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight / self.M_IN_KM * self.duration
@@ -74,8 +75,8 @@ class Running(Training):
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
 
-    COEFFICIENT_1: float = 0.035  # Для множителя веса спортсмена
-    COEFFICIENT_2: float = 0.029  # Для множителя
+    WEIGHT_MUlTIPLICATION_COEFF_1: float = 0.035  # Для множителя веса
+    WEIGHT_MUlTIPLICATION_COEFF_2: float = 0.029  # Для множителя веса
     KMH_TO_MS: float = 0.278  # для перевода значений из км/ч в м/с
     METER_TO_SM: int = 100  # Метры в сантиметры
 
@@ -85,12 +86,13 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         """Рассчитать потраченные калории."""
-        mean_speed = self.get_mean_speed()
-        minutes = self.duration * self.MIN_IN_HOUR
-        speed_ms = mean_speed * self.KMH_TO_MS
+        mean_speed: float = self.get_mean_speed()
+        minutes: float = self.duration * self.MIN_IN_HOUR
+        speed_ms: float = mean_speed * self.KMH_TO_MS
         height_m: float = self.height / self.METER_TO_SM
-        return ((self.COEFFICIENT_1 * self.weight + (speed_ms ** 2 / height_m)
-                 * self.COEFFICIENT_2 * self.weight) * minutes)
+        return ((self.WEIGHT_MUlTIPLICATION_COEFF_1 * self.weight
+                 + (speed_ms ** 2 / height_m)
+                 * self.WEIGHT_MUlTIPLICATION_COEFF_2 * self.weight) * minutes)
 
 
 class Swimming(Training):
@@ -112,7 +114,7 @@ class Swimming(Training):
 
     def get_spent_calories(self) -> float:
         """Рассчитать потраченные калории."""
-        mean_speed = self.get_mean_speed()
+        mean_speed: float = self.get_mean_speed()
         return ((mean_speed + self.VALUE_1)
                 * self.VALUE_2 * self.weight * self.duration)
 
@@ -125,7 +127,7 @@ def read_package(workout_type: str, data: list) -> Training:
     if workout_type in exercise_types and data:
         return exercise_types[workout_type](*data)
 
-    raise RuntimeError('Unexpected package')
+    raise ValueError('Unexpected package')
 
 
 def main(training: Training) -> None:
