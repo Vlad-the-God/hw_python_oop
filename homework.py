@@ -75,8 +75,8 @@ class Running(Training):
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
 
-    WEIGHT_MUlTIPLICATION_COEFF_1: float = 0.035  # Для множителя веса
-    WEIGHT_MUlTIPLICATION_COEFF_2: float = 0.029  # Для множителя веса
+    CALORIES_WEIGHT_MULTIPLIER: float = 0.035  # Для множителя веса
+    CALORIES_SPEED_HEIGHT_MULTIPLIER: float = 0.029  # Для множителя скорости
     KMH_TO_MS: float = 0.278  # для перевода значений из км/ч в м/с
     METER_TO_SM: int = 100  # Метры в сантиметры
 
@@ -90,17 +90,18 @@ class SportsWalking(Training):
         minutes: float = self.duration * self.MIN_IN_HOUR
         speed_ms: float = mean_speed * self.KMH_TO_MS
         height_m: float = self.height / self.METER_TO_SM
-        return ((self.WEIGHT_MUlTIPLICATION_COEFF_1 * self.weight
-                 + (speed_ms ** 2 / height_m)
-                 * self.WEIGHT_MUlTIPLICATION_COEFF_2 * self.weight) * minutes)
+        return ((self.CALORIES_WEIGHT_MULTIPLIER * self.weight
+                + (speed_ms ** 2 / height_m)
+                * self.CALORIES_SPEED_HEIGHT_MULTIPLIER * self.weight)
+                * minutes)
 
 
 class Swimming(Training):
     """Тренировка: плавание."""
 
     LEN_STEP: float = 1.38
-    VALUE_1: float = 1.1  # Для смещения значения средней скорости
-    VALUE_2: int = 2  # Для множителя скорости
+    CALORIES_MEAN_SPEED_SHIFT: float = 1.1  # Для смещения средней скорости
+    CALORIES_WEIGHT_MULTIPLIER: int = 2  # Для множителя веса
 
     def __init__(self, action, duration, weight, length_pool, count_pool):
         super().__init__(action, duration, weight)
@@ -115,8 +116,9 @@ class Swimming(Training):
     def get_spent_calories(self) -> float:
         """Рассчитать потраченные калории."""
         mean_speed: float = self.get_mean_speed()
-        return ((mean_speed + self.VALUE_1)
-                * self.VALUE_2 * self.weight * self.duration)
+        return ((mean_speed + self.CALORIES_MEAN_SPEED_SHIFT)
+                * self.CALORIES_WEIGHT_MULTIPLIER * self.weight
+                * self.duration)
 
 
 def read_package(workout_type: str, data: list) -> Training:
